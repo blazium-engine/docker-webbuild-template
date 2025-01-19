@@ -1,0 +1,4 @@
+.keep
+**/scripts/
+README.md
+Makefile
