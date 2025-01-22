@@ -1,3 +1,4 @@
 /static/*
 !/static/.keep
 .env
+.DS_Store
