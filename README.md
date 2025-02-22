@@ -22,7 +22,11 @@ This repository provides a template for deploying web-exported game builds of th
 
 ### Support for YouTube Playables
 
-YouTube Playables requires that the initial game bundle be **less than 15 MiB**. To meet this requirement, **WebAssembly (WASM) files must be compressed** before serving. This configuration enables **gzip compression** for `.wasm` files and ensures that browsers capable of handling gzip receive the compressed `.wasm.gz` file instead of the uncompressed version.
+YouTube Playables requires that the initial game bundle be **less than 15 MiB**.
+To meet this requirement, **WebAssembly (WASM) files must be precompressed**.
+This configuration will serve the pre-compressed wasm files if present and
+supported by the browser, otherwise it will fallback to the uncompressed
+version.
 
 ### How It Works
 - If the browser **supports gzip encoding**, Nginx serves the precompressed `.wasm.gz` file **as if it were** a `.wasm` file.
@@ -30,11 +34,13 @@ YouTube Playables requires that the initial game bundle be **less than 15 MiB**.
 - This behavior helps ensure compatibility while keeping the initial bundle size under the **15 MiB limit** required by YouTube Playables.
 
 ### Implementation Details
-- Nginx detects the client's `Accept-Encoding` header.
-- If gzip is supported, `.wasm.gz` is served with the correct **`Content-Type: application/wasm`** and **`Content-Encoding: gzip`** headers.
-- The configuration automatically rewrites requests for `.wasm` to `.wasm.gz` when applicable.
+- `gzip_static` enables serving a precompressed `.gz` file if it exists and the client supports gzip.
+- If the client does not support gzip or no precompressed file exists, Nginx will serve the uncompressed file.
+- This is done with the appropiate `Content-Type` and `Content-Encoding` headers.
 
 This ensures that **web-exported games** can be deployed on **YouTube Playables** while remaining within the required file size constraints.
+
+Also `/ytgame` endpoint is added to not serve with the `Cross-Origin-Opener-Policy "same-origin"` and `Cross-Origin-Embedder-Policy "require-corp"`.
 
 ---
 
