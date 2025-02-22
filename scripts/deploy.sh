@@ -10,7 +10,7 @@ REGISTRY_PATH=${REGISTRY_PATH:-example-registry}              # Default registry
 TAG=${TAG:-latest}                                            # Default tag
 
 # Build the Docker image
-docker build -t "$PROJECT_NAME" .
+docker build --platform linux/amd64 -t "$PROJECT_NAME" .
 
 # Tag the Docker image
 docker tag "$PROJECT_NAME" "$DOCKER_REGISTRY/$REGISTRY_PATH/$PROJECT_NAME:$TAG"
