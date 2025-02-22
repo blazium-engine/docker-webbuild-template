@@ -18,6 +18,26 @@ This repository provides a template for deploying web-exported game builds of th
 
 ---
 
+## Addition: 2/22/2025
+
+### Support for YouTube Playables
+
+YouTube Playables requires that the initial game bundle be **less than 15 MiB**. To meet this requirement, **WebAssembly (WASM) files must be compressed** before serving. This configuration enables **gzip compression** for `.wasm` files and ensures that browsers capable of handling gzip receive the compressed `.wasm.gz` file instead of the uncompressed version.
+
+### How It Works
+- If the browser **supports gzip encoding**, Nginx serves the precompressed `.wasm.gz` file **as if it were** a `.wasm` file.
+- If the browser **does not support gzip**, Nginx falls back to serving the original `.wasm` file.
+- This behavior helps ensure compatibility while keeping the initial bundle size under the **15 MiB limit** required by YouTube Playables.
+
+### Implementation Details
+- Nginx detects the client's `Accept-Encoding` header.
+- If gzip is supported, `.wasm.gz` is served with the correct **`Content-Type: application/wasm`** and **`Content-Encoding: gzip`** headers.
+- The configuration automatically rewrites requests for `.wasm` to `.wasm.gz` when applicable.
+
+This ensures that **web-exported games** can be deployed on **YouTube Playables** while remaining within the required file size constraints.
+
+---
+
 ## Directory Structure
 
 ```plaintext
